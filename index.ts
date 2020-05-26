@@ -15,11 +15,15 @@ export default class InputLoop {
 	}
 
 	choose = async (options: string[]): Promise<boolean[]> => {
+		console.log('\n');
+		console.log('------------------------------');
 		options.forEach((option: string, index: number) => {
 			console.log(`${index}: ${option}`);
 		});
-
+		console.log("------------------------------");
+		
 		const result = await this.read();
+		console.log('\n');
 
 		return options.map((_option: string, index: number) => {
 			if (result === String(index)) {
