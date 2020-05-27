@@ -6,7 +6,7 @@ Deno.test("Should not be done", () => {
   assertEquals(loop.done, false);
 });
 
-Deno.test("Should not be marked as done", () => {
+Deno.test("Should be marked as done", () => {
   const loop = new inputLoop();
   loop.close();
   assertEquals(loop.done, true);
