@@ -1,7 +1,12 @@
-# Input
+
+<div align="center">
+	<img width="200" src=".github/input.png" alt="Input Logo" /> 
+</div>
+
+# Input-Deno
 ![Tests](https://github.com/keegandonley/input-deno/workflows/Tests/badge.svg)
 
-Used to repeatedly get input from the user.
+Used to get command line input from the user
 
 ## Choose
 Returns an array indicating which index was selected
@@ -52,4 +57,19 @@ while (!input.done) {
 		input.close();
 	}
 }
+```
+
+## Repeat
+Repeat the previous question
+
+```javascript
+const input = new InputLoop();
+const mainQuestions = ["Add a node", "Add an edge", "Set starting node", "Evaluate a string", "Quit"];
+
+let result = await input.choose(mainQuestions);
+
+while (!(result[0] || result[1])) {
+	result = input.repeat();
+}
+
 ```
