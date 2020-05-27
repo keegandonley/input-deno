@@ -1,6 +1,40 @@
+enum ACTIONS {
+	NONE,
+	CHOOSE,
+	QUESTION
+}
+
+interface ILastAction {
+	argument: string | string[];
+	action: ACTIONS;
+}
+
 export default class InputLoop {
-	buf = new Uint8Array(1024);
+	private buf = new Uint8Array(1024);
 	done = false;
+
+	private last: ILastAction = {
+		argument: '',
+		action: ACTIONS.NONE,
+	};
+
+	private saveLast = (argument: string | string[], action: ACTIONS) => {
+		this.last = {
+			argument,
+			action,
+		}
+	}
+
+	repeat = () => {
+		if (this.last.action) {
+			if (this.last.action === ACTIONS.CHOOSE) {
+				return this.choose(this.last.argument as string[]);
+			}
+			if (this.last.action === ACTIONS.QUESTION) {
+				return this.question(this.last.argument as string);
+			}
+		}
+	}
 
 	read = async (): Promise<string> => {
 		return new Promise(async (resolve, reject) => {
@@ -25,6 +59,8 @@ export default class InputLoop {
 		const result = await this.read();
 		console.log('\n');
 
+		this.saveLast(options, ACTIONS.CHOOSE);
+
 		return options.map((_option: string, index: number) => {
 			if (result === String(index)) {
 				return true;
@@ -36,11 +72,12 @@ export default class InputLoop {
 	question = (question: string): Promise<string> => {
 		console.log(question);
 
+		this.saveLast(question, ACTIONS.QUESTION);
+
 		return this.read();
 	}
 
 	close = () => {
 		this.done = true;
 	}
-
 }
