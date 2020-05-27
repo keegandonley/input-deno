@@ -18,8 +18,8 @@ export default class InputLoop {
 	private silent = false;
 	done = false;
 
-	constructor(args: IConfig) {
-		this.silent = args.silent ?? false;
+	constructor(args?: IConfig) {
+		this.silent = args?.silent ?? false;
 	}
 
 	private last: ILastAction = {
