@@ -1,4 +1,5 @@
-# Input loop
+# Input
+![Tests](https://github.com/keegandonley/input-deno/workflows/Tests/badge.svg)
 
 Used to repeatedly get input from the user.
 
