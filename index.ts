@@ -9,9 +9,18 @@ interface ILastAction {
 	action: ACTIONS;
 }
 
+export interface IConfig {
+	silent?: boolean;
+}
+
 export default class InputLoop {
 	private buf = new Uint8Array(1024);
+	private silent = false;
 	done = false;
+
+	constructor(args: IConfig) {
+		this.silent = args.silent ?? false;
+	}
 
 	private last: ILastAction = {
 		argument: '',
@@ -25,13 +34,30 @@ export default class InputLoop {
 		}
 	}
 
-	repeat = () => {
+	private coerceChoice = (value: string | number): string => {
+		if (typeof value === 'number') {
+			return String(value);
+		}
+		return value;
+	}
+
+	private writeLog = (value?: string) => {
+		if (!this.silent) {
+			console.log(value);
+		}
+	}
+
+	private promisify = (value?: string): Promise<string> => {
+		return new Promise((resolve) => resolve(value));
+	}
+
+	repeat = (value?: string | number) => {
 		if (this.last.action) {
 			if (this.last.action === ACTIONS.CHOOSE) {
-				return this.choose(this.last.argument as string[]);
+				return this.choose(this.last.argument as string[], value);
 			}
 			if (this.last.action === ACTIONS.QUESTION) {
-				return this.question(this.last.argument as string);
+				return this.question(this.last.argument as string, value);
 			}
 		}
 	}
@@ -48,16 +74,23 @@ export default class InputLoop {
 		});
 	}
 
-	choose = async (options: string[]): Promise<boolean[]> => {
-		console.log('\n');
-		console.log('------------------------------');
+	choose = async (options: string[], choice?: string | number): Promise<boolean[]> => {
+		this.writeLog('\n');
+		this.writeLog('------------------------------');
 		options.forEach((option: string, index: number) => {
-			console.log(`${index}: ${option}`);
+			this.writeLog(`${index}: ${option}`);
 		});
-		console.log("------------------------------");
+		this.writeLog("------------------------------\n");
 		
-		const result = await this.read();
-		console.log('\n');
+		// Allow passing a result directly instead of prompting for it.
+		// Mostly used for testing without the need for interactive input
+
+		let result: string;
+		if (choice !== undefined) {
+			result = this.coerceChoice(choice);
+		} else {
+			result = await this.read();
+		}
 
 		this.saveLast(options, ACTIONS.CHOOSE);
 
@@ -69,10 +102,14 @@ export default class InputLoop {
 		});
 	}
 
-	question = (question: string): Promise<string> => {
-		console.log(question);
+	question = (question: string, value?: string | number): Promise<string> => {
+		this.writeLog(question);
 
 		this.saveLast(question, ACTIONS.QUESTION);
+
+		if (value) {
+			return this.promisify(this.coerceChoice(value));
+		}
 
 		return this.read();
 	}
