@@ -1,40 +1,15 @@
-enum ACTIONS {
-	NONE,
-	CHOOSE,
-	QUESTION
-}
-
-interface ILastAction {
-	argument: string | string[];
-	lastOptionClose: boolean;
-	action: ACTIONS;
-}
-
-export interface IConfig {
-	silent?: boolean;
-}
+import { IConfig, ACTIONS } from './types.ts';
+import Printer from './printer.ts';
+import History from './history.ts';
 
 export default class InputLoop {
 	private buf = new Uint8Array(1024);
-	private silent = false;
 	done = false;
+	out = new Printer();
+	history = new History();
 
 	constructor(args?: IConfig) {
-		this.silent = args?.silent ?? false;
-	}
-
-	private last: ILastAction = {
-		argument: '',
-		lastOptionClose: false,
-		action: ACTIONS.NONE,
-	};
-
-	private saveLast = (argument: string | string[], action: ACTIONS, lastOptionClose: boolean) => {
-		this.last = {
-			argument,
-			lastOptionClose,
-			action,
-		}
+		this.out = new Printer(args);
 	}
 
 	private coerceChoice = (value: string | number): string => {
@@ -44,28 +19,30 @@ export default class InputLoop {
 		return value;
 	}
 
-	private writeLog = (value?: string) => {
-		if (!this.silent) {
-			console.log(value);
-		}
-	}
-
 	private promisify = (value?: string): Promise<string> => {
 		return new Promise((resolve) => resolve(value));
 	}
 
-	repeat = (value?: string | number) => {
-		if (this.last.action) {
-			if (this.last.action === ACTIONS.CHOOSE) {
-				return this.choose(this.last.argument as string[], this.last.lastOptionClose, value);
+	/**
+	 * Repeats the last prompt
+	 * @param {string | number} value value to auto-select
+	 */
+	public repeat = (value?: string | number) => {
+		if (this.history.retrieve().action) {
+			if (this.history.retrieve().action === ACTIONS.CHOOSE) {
+				return this.choose(this.history.retrieve().argument as string[], this.history.retrieve().lastOptionClose, value);
 			}
-			if (this.last.action === ACTIONS.QUESTION) {
-				return this.question(this.last.argument as string, value);
+			if (this.history.retrieve().action === ACTIONS.QUESTION) {
+				return this.question(this.history.retrieve().argument as string, value);
 			}
 		}
 	}
 
-	read = async (): Promise<string> => {
+	/**
+	 * Read input from the console
+	 * @returns {Promise<string>} The value read
+	 */
+	public read = async (): Promise<string> => {
 		return new Promise(async (resolve, reject) => {
 			const n = await Deno.stdin.read(this.buf);
 
@@ -77,13 +54,20 @@ export default class InputLoop {
 		});
 	}
 
-	choose = async (options: string[], lastOptionClose?: boolean, choice?: string | number): Promise<boolean[]> => {
-		this.writeLog('\n');
-		this.writeLog('------------------------------');
+	/**
+	 * Prompts the user to choose from a list of options
+	 * @param {string[]} options
+	 * @param {boolean} lastOptionClose Whether selecting the last option in the list should close the loop
+	 * @param {string | number} choice value to auto-select
+	 * @returns {Promise<boolean[]>} An array of booleans representing which index was selected
+	 */
+	public choose = async (options: string[], lastOptionClose?: boolean, choice?: string | number): Promise<boolean[]> => {
+		this.out.newline();
+		this.out.divider(30);
 		options.forEach((option: string, index: number) => {
-			this.writeLog(`${index}: ${option}`);
+			this.out.print(`${index}: ${option}`);
 		});
-		this.writeLog("------------------------------\n");
+		this.out.divider(30);
 		
 		// Allow passing a result directly instead of prompting for it.
 		// Mostly used for testing without the need for interactive input
@@ -95,7 +79,7 @@ export default class InputLoop {
 			result = await this.read();
 		}
 
-		this.saveLast(options, ACTIONS.CHOOSE, lastOptionClose ?? false);
+		this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false);
 
 		if (lastOptionClose && result === String(options.length - 1)) {
 			this.close();
@@ -109,10 +93,16 @@ export default class InputLoop {
 		});
 	}
 
-	question = (question: string, value?: string | number): Promise<string> => {
-		this.writeLog(question);
+	/**
+	 * Prompts the user to answer a question
+	 * @param {string} question
+	 * @param {string | number} value value to auto-select
+	 * @returns {Promise<string>} The value entered
+	 */
+	public question = (question: string, value?: string | number): Promise<string> => {
+		this.out.print(question);
 
-		this.saveLast(question, ACTIONS.QUESTION, this.last.lastOptionClose);
+		this.history.save(question, ACTIONS.QUESTION);
 
 		if (value) {
 			return this.promisify(this.coerceChoice(value));
@@ -121,7 +111,10 @@ export default class InputLoop {
 		return this.read();
 	}
 
-	close = () => {
+	/**
+	 * Closes the loop
+	 */
+	public close = () => {
 		this.done = true;
 	}
 }

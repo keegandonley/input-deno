@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  history:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,4 +15,4 @@ jobs:
     - uses: denolib/setup-deno@master
       with:
         deno-version: v1.0.2
-    - run: deno test index.test.ts
+    - run: deno test history.test.ts
