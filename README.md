@@ -1,7 +1,8 @@
 
 <div align="center">
-	<br />
-	<img width="300" src="https://github.com/keegandonley/input-deno/blob/master/.github/input.png?raw=true" alt="Input Logo" /> 
+
+![input](https://raw.githubusercontent.com/keegandonley/input-deno/master/.github/input.png)
+
 </div>
 
 # Input-Deno
