@@ -1,6 +1,7 @@
 
 <div align="center">
-	<img width="200" src=".github/input.png" alt="Input Logo" /> 
+	<br />
+	<img width="300" src="https://github.com/keegandonley/input-deno/blob/master/.github/input.png?raw=true" alt="Input Logo" /> 
 </div>
 
 # Input-Deno
