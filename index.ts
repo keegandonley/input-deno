@@ -6,6 +6,7 @@ enum ACTIONS {
 
 interface ILastAction {
 	argument: string | string[];
+	lastOptionClose: boolean;
 	action: ACTIONS;
 }
 
@@ -24,12 +25,14 @@ export default class InputLoop {
 
 	private last: ILastAction = {
 		argument: '',
+		lastOptionClose: false,
 		action: ACTIONS.NONE,
 	};
 
-	private saveLast = (argument: string | string[], action: ACTIONS) => {
+	private saveLast = (argument: string | string[], action: ACTIONS, lastOptionClose: boolean) => {
 		this.last = {
 			argument,
+			lastOptionClose,
 			action,
 		}
 	}
@@ -54,7 +57,7 @@ export default class InputLoop {
 	repeat = (value?: string | number) => {
 		if (this.last.action) {
 			if (this.last.action === ACTIONS.CHOOSE) {
-				return this.choose(this.last.argument as string[], value);
+				return this.choose(this.last.argument as string[], this.last.lastOptionClose, value);
 			}
 			if (this.last.action === ACTIONS.QUESTION) {
 				return this.question(this.last.argument as string, value);
@@ -74,7 +77,7 @@ export default class InputLoop {
 		});
 	}
 
-	choose = async (options: string[], choice?: string | number): Promise<boolean[]> => {
+	choose = async (options: string[], lastOptionClose?: boolean, choice?: string | number): Promise<boolean[]> => {
 		this.writeLog('\n');
 		this.writeLog('------------------------------');
 		options.forEach((option: string, index: number) => {
@@ -92,7 +95,11 @@ export default class InputLoop {
 			result = await this.read();
 		}
 
-		this.saveLast(options, ACTIONS.CHOOSE);
+		this.saveLast(options, ACTIONS.CHOOSE, lastOptionClose ?? false);
+
+		if (lastOptionClose && result === String(options.length - 1)) {
+			this.close();
+		}
 
 		return options.map((_option: string, index: number) => {
 			if (result === String(index)) {
@@ -105,7 +112,7 @@ export default class InputLoop {
 	question = (question: string, value?: string | number): Promise<string> => {
 		this.writeLog(question);
 
-		this.saveLast(question, ACTIONS.QUESTION);
+		this.saveLast(question, ACTIONS.QUESTION, this.last.lastOptionClose);
 
 		if (value) {
 			return this.promisify(this.coerceChoice(value));

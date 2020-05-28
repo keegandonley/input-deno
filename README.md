@@ -44,6 +44,21 @@ const nodeName = await input.question('Enter the label for the node:');
 ## Looping
 Control an input loop which continues reprompting until terminated
 
+#### Automatic Looping:
+Passing `true` as the second argument will automatically end the iteration of the last option is selected.
+
+```javascript
+const input = new InputLoop();
+const mainQuestions = ["Add a node", "Add an edge", "Set starting node", "Evaluate a string", "Quit"];
+
+while (!input.done) {
+	const result = await input.choose(mainQuestions, true);
+
+	// Business logic...
+}
+```
+
+#### Manual Looping:
 ```javascript
 const input = new InputLoop();
 const mainQuestions = ["Add a node", "Add an edge", "Set starting node", "Evaluate a string", "Quit"];
@@ -72,4 +87,10 @@ while (!(result[0] || result[1])) {
 	result = input.repeat();
 }
 
+```
+
+## Testing
+Deno tests can be run using:
+```
+make test
 ```

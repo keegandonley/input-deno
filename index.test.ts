@@ -25,7 +25,7 @@ Deno.test("Should choose an answer (number)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], 2);
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, 2);
   assertEquals(result, [false, false, true]);
 });
 
@@ -33,7 +33,7 @@ Deno.test("Should choose an answer (string)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], '2');
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, '2');
   assertEquals(result, [false, false, true]);
 });
 
@@ -41,7 +41,7 @@ Deno.test("Should not choose an answer (number)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], 3);
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, 3);
   assertEquals(result, [false, false, false]);
 });
 
@@ -49,7 +49,7 @@ Deno.test("Should not choose an answer (string)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], '3');
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, '3');
   assertEquals(result, [false, false, false]);
 });
 
@@ -57,7 +57,7 @@ Deno.test("Should run repeat on choose success (number)", async () => {
   const loop = new inputLoop({
 	silent: true,
 	});
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], 2);
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, 2);
   assertEquals(result, [false, false, true]);
   const result2 = await loop.repeat(2);
   assertEquals(result2, [false, false, true]);
@@ -67,7 +67,7 @@ Deno.test("Should run repeat on choose success (string)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], '2');
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, '2');
   assertEquals(result, [false, false, true]);
   const result2 = await loop.repeat('2');
   assertEquals(result2, [false, false, true]);
@@ -77,7 +77,7 @@ Deno.test("Should run repeat on choose fail (number)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], 3);
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, 3);
   assertEquals(result, [false, false, false]);
   const result2 = await loop.repeat(3);
   assertEquals(result2, [false, false, false]);
@@ -87,7 +87,7 @@ Deno.test("Should run repeat on choose fail (string)", async () => {
   const loop = new inputLoop({
 	  silent: true,
   });
-  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], "3");
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, "3");
   assertEquals(result, [false, false, false]);
   const result2 = await loop.repeat("3");
   assertEquals(result2, [false, false, false]);
@@ -117,4 +117,24 @@ Deno.test("Should run repeat on question (string)", async () => {
   assertEquals(result, "Hello!");
   const result2 = await loop.repeat("Hello Again!");
   assertEquals(result2, 'Hello Again!')
+});
+
+Deno.test("Should close automatically (string)", async () => {
+	const loop = new inputLoop({
+		silent: true,
+	});
+	assertEquals(loop.done, false);
+	const result = await loop.choose(["Option 1", "Option 2", "Option 3"], true, "2");
+	assertEquals(result, [false, false, true]);
+	assertEquals(loop.done, true);
+});
+
+Deno.test("Should close automatically (number)", async () => {
+	const loop = new inputLoop({
+		silent: true,
+	});
+	assertEquals(loop.done, false);
+	const result = await loop.choose(["Option 1", "Option 2", "Option 3"], true, 2);
+	assertEquals(result, [false, false, true]);
+	assertEquals(loop.done, true);
 });
