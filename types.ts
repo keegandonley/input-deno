@@ -13,3 +13,7 @@ export interface ILastAction {
 	lastOptionClose: boolean;
 	action: ACTIONS;
 }
+
+export interface IHistoryOptions {
+	useFullHistory?: boolean;
+}
