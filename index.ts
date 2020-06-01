@@ -23,6 +23,10 @@ export default class InputLoop {
 		return new Promise((resolve) => resolve(value));
 	}
 
+	private cleanInput = (value?: string): string => {
+		return value?.replace('\n', '').replace('\r', '') ?? '';
+	}
+
 	/**
 	 * Repeats the last prompt
 	 * @param {string | number} value value to auto-select
@@ -47,7 +51,7 @@ export default class InputLoop {
 			const n = await Deno.stdin.read(this.buf);
 
 			if (n) {
-				resolve(new TextDecoder().decode(this.buf.subarray(0, n)).replace('\n', '').replace('\r', ''));
+				resolve(this.cleanInput(new TextDecoder().decode(this.buf.subarray(0, n))));
 			} else {
 				reject();
 			}
@@ -74,7 +78,7 @@ export default class InputLoop {
 
 		let result: string;
 		if (choice !== undefined) {
-			result = this.coerceChoice(choice);
+			result = this.cleanInput(this.coerceChoice(choice));
 		} else {
 			result = await this.read();
 		}
@@ -105,7 +109,7 @@ export default class InputLoop {
 		this.history.save(question, ACTIONS.QUESTION);
 
 		if (value) {
-			return this.promisify(this.coerceChoice(value));
+			return this.promisify(this.cleanInput(this.coerceChoice(value)));
 		}
 
 		return this.read();

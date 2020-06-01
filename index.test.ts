@@ -37,6 +37,15 @@ Deno.test("Should choose an answer (string)", async () => {
   assertEquals(result, [false, false, true]);
 });
 
+// Added to test issue https://github.com/keegandonley/input-deno/issues/3
+Deno.test("Should choose an answer (string | CRLF) ", async () => {
+  const loop = new inputLoop({
+	  silent: true,
+  });
+  const result = await loop.choose(["Option 1", "Option 2", "Option 3"], false, '2\r\n');
+  assertEquals(result, [false, false, true]);
+});
+
 Deno.test("Should not choose an answer (number)", async () => {
   const loop = new inputLoop({
 	  silent: true,
