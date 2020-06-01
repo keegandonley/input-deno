@@ -47,7 +47,7 @@ export default class InputLoop {
 			const n = await Deno.stdin.read(this.buf);
 
 			if (n) {
-				resolve(new TextDecoder().decode(this.buf.subarray(0, n)).replace('\n', ''));
+				resolve(new TextDecoder().decode(this.buf.subarray(0, n)).replace('\n', '').replace('\r', ''));
 			} else {
 				reject();
 			}
