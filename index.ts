@@ -1,4 +1,4 @@
-import { IConfig, ACTIONS } from './types.ts';
+import { IConfig, ACTIONS, ILastAction, IHistoryAnswers } from './types.ts';
 import Printer from './printer.ts';
 import History from './history.ts';
 
@@ -8,12 +8,14 @@ export default class InputLoop {
 	out = new Printer();
 	history = new History();
 
+
 	constructor(args?: IConfig) {
 		this.out = new Printer(args);
 		this.history = new History({
 			useFullHistory: args?.useFullHistory,
 		});
 	}
+
 
 	private coerceChoice = (value: string | number): string => {
 		if (typeof value === 'number') {
@@ -22,28 +24,44 @@ export default class InputLoop {
 		return value;
 	}
 
-	private promisify = (value?: string): Promise<string> => {
-		return new Promise((resolve) => resolve(value));
-	}
 
 	private cleanInput = (value?: string): string => {
 		return value?.replace('\n', '').replace('\r', '') ?? '';
 	}
+
 
 	/**
 	 * Repeats the last prompt
 	 * @param {string | number} value value to auto-select
 	 */
 	public repeat = (value?: string | number) => {
-		if (this.history.retrieve().action) {
-			if (this.history.retrieve().action === ACTIONS.CHOOSE) {
-				return this.choose(this.history.retrieve().argument as string[], this.history.retrieve().lastOptionClose, value);
+		if (!this.history.fullHistoryEnabled()) {
+			if (this.history.retrieve().action) {
+				if (this.history.retrieve().action === ACTIONS.CHOOSE) {
+					return this.choose(this.history.retrieve().argument as string[], this.history.retrieve().lastOptionClose, value);
+				}
+				if (this.history.retrieve().action === ACTIONS.QUESTION) {
+					return this.question(this.history.retrieve().argument as string, value);
+				}
 			}
-			if (this.history.retrieve().action === ACTIONS.QUESTION) {
-				return this.question(this.history.retrieve().argument as string, value);
+		} else if (this.history.fullHistoryEnabled()) {
+			if (this.history.retrieve().action) {
+				if (this.history.retrieve().action === ACTIONS.CHOOSE) {
+					const entry = this.history.pop();
+					if (entry) {
+						return this.choose(entry.argument as string[], entry.lastOptionClose, value);
+					}
+				}
+				if (this.history.retrieve().action === ACTIONS.QUESTION) {
+					const entry = this.history.pop();
+					if (entry) {
+						return this.question(entry.argument as string, value);
+					}
+				}
 			}
 		}
 	}
+
 
 	/**
 	 * Read input from the console
@@ -60,6 +78,7 @@ export default class InputLoop {
 			}
 		});
 	}
+
 
 	/**
 	 * Prompts the user to choose from a list of options
@@ -86,7 +105,7 @@ export default class InputLoop {
 			result = await this.read();
 		}
 
-		this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false);
+		this.history.save(options, ACTIONS.CHOOSE, result, lastOptionClose ?? false);
 
 		if (lastOptionClose && result === String(options.length - 1)) {
 			this.close();
@@ -100,23 +119,30 @@ export default class InputLoop {
 		});
 	}
 
+
 	/**
 	 * Prompts the user to answer a question
 	 * @param {string} question
 	 * @param {string | number} value value to auto-select
 	 * @returns {Promise<string>} The value entered
 	 */
-	public question = (question: string, value?: string | number): Promise<string> => {
+	public question = async (question: string, value?: string | number): Promise<string> => {
 		this.out.print(question);
 
-		this.history.save(question, ACTIONS.QUESTION);
 
+		let result: string;
 		if (value) {
-			return this.promisify(this.cleanInput(this.coerceChoice(value)));
+			result = this.cleanInput(this.coerceChoice(value));
+		} else {
+			result = await this.read();
 		}
 
-		return this.read();
+
+		this.history.save(question, ACTIONS.QUESTION, result);
+
+		return result;
 	}
+
 
 	/**
 	 * Closes the loop

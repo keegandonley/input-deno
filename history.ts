@@ -1,4 +1,4 @@
-import { ILastAction, ACTIONS, IHistoryOptions } from './types.ts';
+import { ILastAction, ACTIONS, IHistoryOptions, ILastActionFull } from './types.ts';
 
 export default class History {
 	private _useFullHistory: boolean = true;
@@ -9,19 +9,19 @@ export default class History {
 		action: ACTIONS.NONE,
 	};
 
-	private fullHistory: ILastAction[] = [];
+	private fullHistory: ILastActionFull[] = [];
 
 	constructor(options?: IHistoryOptions) {
 		this._useFullHistory = options?.useFullHistory ?? true;
 	}
 
-	private addToHistory = (entry: ILastAction) => {
+	private addToHistory = (entry: ILastActionFull) => {
 		if (this._useFullHistory) {
 			this.fullHistory.push(entry);
 		}
 	}
 
-	public save = (argument: string | string[], action: ACTIONS, lastOptionClose?: boolean) => {
+	public save = (argument: string | string[], action: ACTIONS, result?: string, lastOptionClose?: boolean) => {
 		const historyEntry = {
 			argument,
 			lastOptionClose: lastOptionClose ?? this.last.lastOptionClose,
@@ -29,7 +29,10 @@ export default class History {
 		};
 
 		this.last = historyEntry;
-		this.addToHistory(historyEntry);
+		this.addToHistory({
+			...historyEntry,
+			result,
+		});
 	}
 
 	public retrieve = () => {
@@ -56,5 +59,9 @@ export default class History {
 
 	public get = () => {
 		return this.fullHistory;
+	}
+
+	public fullHistoryEnabled = () => {
+		return this._useFullHistory;
 	}
 }

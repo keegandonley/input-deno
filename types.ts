@@ -15,6 +15,16 @@ export interface ILastAction {
 	action: ACTIONS;
 }
 
+export interface ILastActionFull extends ILastAction {
+	result?: string;
+}
+
 export interface IHistoryOptions {
 	useFullHistory?: boolean;
+}
+
+export interface IHistoryAnswers {
+	argument: string | string[];
+	action: ACTIONS;
+	value: string;
 }
