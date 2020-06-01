@@ -1,5 +1,6 @@
 export interface IConfig {
   silent?: boolean;
+  useFullHistory?: boolean;
 }
 
 export enum ACTIONS {

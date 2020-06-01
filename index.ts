@@ -10,6 +10,9 @@ export default class InputLoop {
 
 	constructor(args?: IConfig) {
 		this.out = new Printer(args);
+		this.history = new History({
+			useFullHistory: args?.useFullHistory,
+		});
 	}
 
 	private coerceChoice = (value: string | number): string => {

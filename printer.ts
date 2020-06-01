@@ -3,7 +3,7 @@ import { IConfig } from "./types.ts";
 const dividerChar = '-';
 
 export default class Printer {
-	silent = false;
+	private silent = false;
 
 	constructor(config?: IConfig) {
 		this.silent = config?.silent ?? false;

@@ -37,14 +37,14 @@ export default class History {
 	}
 
 	public shift = () => {
-		if (this._useFullHistory && this.fullHistory.length > 0) {
+		if (this._useFullHistory) {
 			return this.fullHistory.shift();
 		}
 		return undefined;
 	}
 
 	public pop = () => {
-		if (this._useFullHistory && this.fullHistory.length > 0) {
+		if (this._useFullHistory) {
 			return this.fullHistory.pop();
 		}
 		return undefined;
