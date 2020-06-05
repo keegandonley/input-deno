@@ -118,6 +118,14 @@ Deno.test("Should answer a question (string)", async () => {
   assertEquals(result, "Hello!");
 });
 
+Deno.test("Should answer a question (string | no newline)", async () => {
+  const loop = new inputLoop({
+    silent: true,
+  });
+  const result = await loop.question("Please answer the question", false, "Hello!");
+  assertEquals(result, "Hello!");
+});
+
 Deno.test("Should run repeat on question (string)", async () => {
   const loop = new inputLoop({
     silent: true,
