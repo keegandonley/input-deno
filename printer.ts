@@ -9,14 +9,15 @@ export default class Printer {
 		this.silent = config?.silent ?? false;
 	}
 
-	private writeLine = (value?: string) => {
+	private writeLine = (value?: string, includeNewline?: boolean) => {
 		if (!this.silent) {
-			console.log(value);
+			const e = new TextEncoder().encode(`${value}${includeNewline ? '\n' : ''}`);
+			Deno.stdout.writeSync(Uint8Array.from(e));
 		}
 	}
 
-	public print = (value?: string) => {
-		this.writeLine(value);
+	public print = (value?: string, includeNewline?: boolean) => {
+		this.writeLine(value, includeNewline);
 	}
 
 	public newline = () => {

@@ -43,6 +43,19 @@ const nodeName = await input.question('Enter the label for the node:');
 // 'a'
 ```
 
+Include a newline after printing the question:
+```javascript
+const input = new InputLoop();
+const nodeName = await input.question('Enter the label for the node:', true);
+
+// output:
+
+// Enter the label for the node:
+
+// Return Value:
+// 'a'
+```
+
 ## Looping
 Control an input loop which continues reprompting until terminated
 

@@ -37,7 +37,7 @@ export default class InputLoop {
 				return this.choose(this.history.retrieve().argument as string[], this.history.retrieve().lastOptionClose, value);
 			}
 			if (this.history.retrieve().action === ACTIONS.QUESTION) {
-				return this.question(this.history.retrieve().argument as string, value);
+				return this.question(this.history.retrieve().argument as string, this.history.retrieve().includeNewline, value);
 			}
 		}
 	}
@@ -100,13 +100,14 @@ export default class InputLoop {
 	/**
 	 * Prompts the user to answer a question
 	 * @param {string} question
+	 * @param {boolean} includeNewline Include a newline before asking for the input
 	 * @param {string | number} value value to auto-select
 	 * @returns {Promise<string>} The value entered
 	 */
-	public question = (question: string, value?: string | number): Promise<string> => {
-		this.out.print(question);
+	public question = (question: string, includeNewline?: boolean, value?: string | number): Promise<string> => {
+		this.out.print(question, includeNewline);
 
-		this.history.save(question, ACTIONS.QUESTION);
+		this.history.save(question, ACTIONS.QUESTION, undefined, includeNewline);
 
 		if (value) {
 			return this.promisify(this.cleanInput(this.coerceChoice(value)));

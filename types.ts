@@ -12,4 +12,5 @@ export interface ILastAction {
 	argument: string | string[];
 	lastOptionClose: boolean;
 	action: ACTIONS;
+	includeNewline: boolean;
 }

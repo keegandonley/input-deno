@@ -5,12 +5,14 @@ export default class History {
 		argument: '',
 		lastOptionClose: false,
 		action: ACTIONS.NONE,
+		includeNewline: false,
 	};
 
-	public save = (argument: string | string[], action: ACTIONS, lastOptionClose?: boolean) => {
+	public save = (argument: string | string[], action: ACTIONS, lastOptionClose?: boolean, includeNewline?: boolean) => {
 		this.last = {
 			argument,
 			lastOptionClose: lastOptionClose ?? this.last.lastOptionClose,
+			includeNewline: includeNewline ?? this.last.includeNewline,
 			action,
 		}
 	}
