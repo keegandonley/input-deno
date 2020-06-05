@@ -21,7 +21,7 @@ export default class Printer {
 	}
 
 	public newline = () => {
-		this.writeLine('\n');
+		this.writeLine('\n', false);
 	}
 
 	public divider = (length: number = 10) => {
@@ -31,6 +31,6 @@ export default class Printer {
 			outStr += dividerChar
 		}
 
-		this.writeLine(outStr);
+		this.writeLine(outStr, true);
 	}
 }

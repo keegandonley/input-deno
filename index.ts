@@ -69,7 +69,7 @@ export default class InputLoop {
 		this.out.newline();
 		this.out.divider(30);
 		options.forEach((option: string, index: number) => {
-			this.out.print(`${index}: ${option}`);
+			this.out.print(`${index}: ${option}`, true);
 		});
 		this.out.divider(30);
 		
