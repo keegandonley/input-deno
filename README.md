@@ -14,6 +14,22 @@ Used to get command line input from the user
 
 ```javascript
 import InputLoop from 'https://raw.githubusercontent.com/Yazidn/input-deno/master/install/input.ts';
+
+// Example
+const input = new InputLoop();
+await input.choose(['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Quit'], {
+	lastOptionClose: true,
+	displayInline: true,
+	indexStyle: ['{ ', ' }'],
+	dividerBottom: true,
+	dividerLength: 127,
+	inlineSeparator: ' | '
+});
+
+// Output
+
+// { 0 } Option 1  |  { 1 } Option 2  |  { 2 } Option 3  |  { 3 } Option 4  |  { 4 } Option 5  |  { 5 } Option 6  |  { 6 } Quit  |  
+// -------------------------------------------------------------------------------------------------------------------------------
 ```
 
 ## Choose
@@ -35,8 +51,8 @@ const accepting = await input.choose(['Accepting node', 'Non-accepting node']);
 // [false, true]
 ```
 
-You can further customize the behavior of choose() by passing an object of perferences as a second argument.
-All preferences are optional, as shows in the interface below.
+You can further customize the behavior of the choose method by passing an object of perferences as a second argument.
+All preferences are optional, as shown in the interface below.
 
 ```javascript
 interface Preferences {
@@ -52,23 +68,6 @@ interface Preferences {
 	dividerChar?: string, // Set a custom character for the divider, default is '-'
 	dividerPadding?: boolean // Add space (new line) between dividers and options. 
 }
-
-// Example
-const input = new InputLoop();
-await input.choose(['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Quit'], {
-        lastOptionClose: true,
-        displayInline: true,
-        indexStyle: ['{ ', ' }'],
-        dividerBottom: true,
-		dividerLength: 127,
-		inlineSeparator: ' | '
-});
-
-// Output
-
-// { 0 } Option 1  |  { 1 } Option 2  |  { 2 } Option 3  |  { 3 } Option 4  |  { 4 } Option 5  |  { 5 } Option 6  |  { 6 } Quit  |  
-// -------------------------------------------------------------------------------------------------------------------------------
-
 ```
 
 ## Question
