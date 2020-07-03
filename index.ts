@@ -67,11 +67,10 @@ export default class InputLoop {
 	 */
 	public choose = async (options: string[], lastOptionClose?: boolean, choice?: string | number): Promise<boolean[]> => {
 		this.out.newline();
-		this.out.divider(30);
 		options.forEach((option: string, index: number) => {
-			this.out.print(`${index}: ${option}`, true);
+			if (options.length < 5) this.out.print(`[${index}] ${option}  `);
+			else this.out.print(`${index}: ${option}`, true);
 		});
-		this.out.divider(30);
 		
 		// Allow passing a result directly instead of prompting for it.
 		// Mostly used for testing without the need for interactive input
