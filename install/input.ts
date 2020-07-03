@@ -123,12 +123,11 @@ System.register("types", [], function (exports_1, context_1) {
 });
 System.register("printer", [], function (exports_2, context_2) {
   "use strict";
-  var dividerChar, Printer;
+  var Printer;
   var __moduleName = context_2 && context_2.id;
   return {
     setters: [],
     execute: function () {
-      dividerChar = "-";
       Printer = class Printer {
         constructor(config) {
           this.silent = false;
@@ -146,7 +145,7 @@ System.register("printer", [], function (exports_2, context_2) {
           this.newline = () => {
             this.writeLine("\n", false);
           };
-          this.divider = (length = 10) => {
+          this.divider = (length = 10, dividerChar = "-") => {
             let outStr = "";
             for (let i = 0; i < length; i++) {
               outStr += dividerChar;
@@ -243,11 +242,10 @@ System.register(
                 if (
                   this.history.retrieve().action === types_ts_2.ACTIONS.CHOOSE
                 ) {
-                  return this.choose(
-                    this.history.retrieve().argument,
-                    this.history.retrieve().lastOptionClose,
-                    value,
-                  );
+                  return this.choose(this.history.retrieve().argument, {
+                    lastOptionClose: this.history.retrieve().lastOptionClose,
+                    choice: value,
+                  });
                 }
                 if (
                   this.history.retrieve().action === types_ts_2.ACTIONS.QUESTION
@@ -285,15 +283,66 @@ System.register(
                      * @param {string | number} choice value to auto-select
                      * @returns {Promise<boolean[]>} An array of booleans representing which index was selected
                      */
-            this.choose = async (options, lastOptionClose, choice) => {
+            this.choose = async (options, preferences = {}) => {
+              let {
+                choice,
+                lastOptionClose,
+                displayInline,
+                inlineSpacing,
+                inlineSeparator,
+                indexStyle,
+                dividerTop,
+                dividerBottom,
+                dividerChar,
+                dividerLength,
+                dividerPadding,
+              } = preferences;
+              // Index Styling
+              let indexStyleLeft = "[";
+              let indexStyleRight = "]";
+              if (indexStyle) {
+                indexStyleLeft = indexStyle[0];
+                indexStyleRight = indexStyle[1];
+              }
+              // Spacing
               this.out.newline();
+              // Divider Up
+              if (dividerTop) {
+                this.out.divider(
+                  dividerLength || undefined,
+                  dividerChar || undefined,
+                );
+              }
+              if (dividerPadding) {
+                this.out.newline();
+              }
+              // Separator
+              let separator = inlineSeparator ? ` ${inlineSeparator} `
+              : " ".repeat(inlineSpacing || 2);
+              // Options
               options.forEach((option, index) => {
-                if (options.length < 5) {
-                  this.out.print(`[${index}] ${option}  `);
+                if (displayInline) {
+                  this.out.print(
+                    `${indexStyleLeft}${index}${indexStyleRight} ${option}${separator}`,
+                  );
                 } else {
-                  this.out.print(`${index}: ${option}`, true);
+                  this.out.print(
+                    `${indexStyleLeft}${index}${indexStyleRight} ${option}`,
+                    true,
+                  );
                 }
               });
+              // Divider Bottom
+              if (dividerBottom) {
+                this.out.newline();
+                if (dividerPadding) {
+                  this.out.newline();
+                }
+                this.out.divider(
+                  dividerLength || undefined,
+                  dividerChar || undefined,
+                );
+              }
               // Allow passing a result directly instead of prompting for it.
               // Mostly used for testing without the need for interactive input
               let result;
