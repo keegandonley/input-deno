@@ -1,7 +1,5 @@
 import { IConfig } from "./types.ts";
 
-const dividerChar = '-';
-
 export default class Printer {
 	silent = false;
 
@@ -24,7 +22,7 @@ export default class Printer {
 		this.writeLine('\n', false);
 	}
 
-	public divider = (length: number = 10) => {
+	public divider = (length: number = 10, dividerChar: string = '-') => {
 		let outStr = '';
 
 		for (let i = 0; i < length; i++) {

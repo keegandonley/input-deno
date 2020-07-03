@@ -14,3 +14,19 @@ export interface ILastAction {
 	action: ACTIONS;
 	includeNewline: boolean;
 }
+
+export interface Preferences {
+	lastOptionClose?: boolean,
+	choice?: string | number,
+	
+	// Breakpoint
+	breakPoint?: number,
+	
+	// Index
+	indexStyle?: string,
+	
+	// Divider
+	dividerUp?: boolean,
+	dividerBottom?: boolean
+	dividerStyle?: string
+}

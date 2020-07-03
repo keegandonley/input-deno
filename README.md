@@ -33,6 +33,32 @@ const accepting = await input.choose(["Accepting node", "Non-accepting node"]);
 // [false, true]
 ```
 
+You can further customize the behavior of choose() by passing an object of perferences as a second argument.
+All preferences are optional, as shows in the interface below.
+
+```javascript
+export interface Preferences {
+	lastOptionClose?: boolean,
+	choice?: string | number,
+	
+	// Breakpoint
+	breakPoint?: number,
+	
+	// Index
+	indexStyle?: string,
+	
+	// Divider
+	dividerUp?: boolean,
+	dividerBottom?: boolean
+	dividerStyle?: string
+}
+
+const input = new InputLoop();
+const accepting = await input.choose(["Accepting node", "Non-accepting node"], {
+	true
+});
+```
+
 ## Question
 Ask a single question
 
