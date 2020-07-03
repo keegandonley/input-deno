@@ -19,6 +19,7 @@ export interface Preferences {
 	lastOptionClose?: boolean,
 	choice?: string | number,
 	displayInline?: boolean,
+	inlineSeparator?: string
 	inlineSpacing?: number,
 	indexStyle?: string[],
 	dividerTop?: boolean,

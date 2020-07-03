@@ -73,52 +73,65 @@ export default class InputLoop {
      * @returns {Promise<boolean[]>} An array of booleans representing which index was selected
      */
     public choose = async (options: string[], preferences: Preferences = {}): Promise<boolean[]> => {
+        let {
+            choice,
+            lastOptionClose,
+            displayInline,
+            inlineSpacing,
+            inlineSeparator,
+            indexStyle,
+            dividerTop,
+            dividerBottom,
+            dividerChar,
+            dividerLength,
+            dividerPadding,
+        }: Preferences = preferences;
+
         // Index Styling
         let indexStyleLeft = '[';
         let indexStyleRight = ']';
 
-        if (preferences.indexStyle) {
-            indexStyleLeft = preferences.indexStyle[0];
-            indexStyleRight = preferences.indexStyle[1];
+        if (indexStyle) {
+            indexStyleLeft = indexStyle[0];
+            indexStyleRight = indexStyle[1];
         }
 
         // Spacing
         this.out.newline();
 
         // Divider Up
-        if (preferences.dividerTop)
-            this.out.divider(preferences.dividerLength || undefined, preferences.dividerChar || undefined);
-        if (preferences.dividerPadding) this.out.newline();
+        if (dividerTop) this.out.divider(dividerLength || undefined, dividerChar || undefined);
+        if (dividerPadding) this.out.newline();
+
+        // Separator
+        let separator = inlineSeparator ? ` ${inlineSeparator} ` : ' '.repeat(inlineSpacing || 2);
 
         // Options
         options.forEach((option: string, index: number) => {
-            if (preferences.displayInline)
-                this.out.print(
-                    `${indexStyleLeft}${index}${indexStyleRight} ${option}${' '.repeat(preferences.inlineSpacing || 2)}`
-                );
+            if (displayInline) this.out.print(`${indexStyleLeft}${index}${indexStyleRight} ${option}${separator}`);
             else this.out.print(`${indexStyleLeft}${index}${indexStyleRight} ${option}`, true);
         });
 
         // Divider Bottom
-        if (preferences.dividerBottom) {
+        if (dividerBottom) {
             this.out.newline();
-            if (preferences.dividerPadding) this.out.newline();
-            this.out.divider(preferences.dividerLength || undefined, preferences.dividerChar || undefined);
+            if (dividerPadding) this.out.newline();
+            this.out.divider(dividerLength || undefined, dividerChar || undefined);
         }
 
         // Allow passing a result directly instead of prompting for it.
         // Mostly used for testing without the need for interactive input
 
         let result: string;
-        if (preferences.choice !== undefined) {
-            result = this.cleanInput(this.coerceChoice(preferences.choice));
+        if (choice !== undefined) {
+            result = this.cleanInput(this.coerceChoice(choice));
         } else {
             result = await this.read();
         }
 
-        this.history.save(options, ACTIONS.CHOOSE, preferences.lastOptionClose ?? false);
+        this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false);
 
-        if (preferences.lastOptionClose && result === String(options.length - 1)) {
+        if (lastOptionClose && result === String(options.length - 1)) {
             this.close();
         }
 

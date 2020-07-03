@@ -8,10 +8,12 @@ while (!input.done) {
     await input.choose(['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Quit'], {
         lastOptionClose: true,
         displayInline: true,
-        indexStyle: ['', ') '],
+        indexStyle: ['{ ', ' }'],
         dividerTop: true,
         dividerBottom: true,
 		dividerPadding: true,
-		inlineSpacing: 8
+		dividerLength: 120,
+		inlineSpacing: 8,
+		inlineSeparator: ' | '
     });
 }
