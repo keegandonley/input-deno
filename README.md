@@ -12,7 +12,7 @@ Used to get command line input from the user
 
 ## Install
 ```javascript
-import InputLoop from '';
+import InputLoop from 'https://raw.githubusercontent.com/Yazidn/input-deno/master/install/input.ts';
 ```
 
 ## Choose
