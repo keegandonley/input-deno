@@ -10,6 +10,11 @@
 
 Used to get command line input from the user
 
+## Install
+```javascript
+import InputLoop from '';
+```
+
 ## Choose
 Returns an array indicating which index was selected
 
