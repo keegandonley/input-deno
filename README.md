@@ -10,7 +10,7 @@
 
 Used to get command line input from the user
 
-## Install
+## Usage
 ```javascript
 import InputLoop from 'https://raw.githubusercontent.com/Yazidn/input-deno/master/install/input.ts';
 ```
@@ -37,26 +37,32 @@ You can further customize the behavior of choose() by passing an object of perfe
 All preferences are optional, as shows in the interface below.
 
 ```javascript
-export interface Preferences {
+interface Preferences {
 	lastOptionClose?: boolean,
 	choice?: string | number,
-	
-	// Breakpoint
-	breakPoint?: number,
-	
-	// Index
-	indexStyle?: string,
-	
-	// Divider
+	displayInline?: boolean, // if true, display all options in the same line
+	inlineSpacing?: number, // number of spaces between inline options, default is 2
+	indexStyle?: string[],
 	dividerUp?: boolean,
 	dividerBottom?: boolean
-	dividerStyle?: string
+	dividerLength?: number
+	dividerChar?: string,
+	dividerPadding?: boolean
 }
 
+// Example
 const input = new InputLoop();
-const accepting = await input.choose(["Accepting node", "Non-accepting node"], {
-	true
+await input.choose(['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Quit'], {
+	lastOptionClose: true,
+	displayInline: true,
+	indexStyle: [
+		'( ', ' )'
+	],
+	inlineSpacing: 5
 });
+
+// Output
+// ( 0 ) Option 1     ( 1 ) Option 2     ( 2 ) Option 3     ( 3 ) Option 4     ( 4 ) Option 5     ( 5 ) Option 6     ( 6 ) Quit
 ```
 
 ## Question

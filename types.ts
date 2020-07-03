@@ -18,15 +18,12 @@ export interface ILastAction {
 export interface Preferences {
 	lastOptionClose?: boolean,
 	choice?: string | number,
-	
-	// Breakpoint
-	breakPoint?: number,
-	
-	// Index
-	indexStyle?: string,
-	
-	// Divider
-	dividerUp?: boolean,
+	displayInline?: boolean,
+	inlineSpacing?: number,
+	indexStyle?: string[],
+	dividerTop?: boolean,
 	dividerBottom?: boolean
-	dividerStyle?: string
+	dividerLength?: number
+	dividerChar?: string,
+	dividerPadding?: boolean
 }

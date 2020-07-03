@@ -73,12 +73,38 @@ export default class InputLoop {
      * @returns {Promise<boolean[]>} An array of booleans representing which index was selected
      */
     public choose = async (options: string[], preferences: Preferences = {}): Promise<boolean[]> => {
+        // Index Styling
+        let indexStyleLeft = '[';
+        let indexStyleRight = ']';
+
+        if (preferences.indexStyle) {
+            indexStyleLeft = preferences.indexStyle[0];
+            indexStyleRight = preferences.indexStyle[1];
+        }
+
+        // Spacing
         this.out.newline();
 
+        // Divider Up
+        if (preferences.dividerTop)
+            this.out.divider(preferences.dividerLength || undefined, preferences.dividerChar || undefined);
+        if (preferences.dividerPadding) this.out.newline();
+
+        // Options
         options.forEach((option: string, index: number) => {
-            if (options.length < 7) this.out.print(`[${index}] ${option}  `);
-            else this.out.print(`${index}: ${option}`, true);
+            if (preferences.displayInline)
+                this.out.print(
+                    `${indexStyleLeft}${index}${indexStyleRight} ${option}${' '.repeat(preferences.inlineSpacing || 2)}`
+                );
+            else this.out.print(`${indexStyleLeft}${index}${indexStyleRight} ${option}`, true);
         });
+
+        // Divider Bottom
+        if (preferences.dividerBottom) {
+            this.out.newline();
+            if (preferences.dividerPadding) this.out.newline();
+            this.out.divider(preferences.dividerLength || undefined, preferences.dividerChar || undefined);
+        }
 
         // Allow passing a result directly instead of prompting for it.
         // Mostly used for testing without the need for interactive input
