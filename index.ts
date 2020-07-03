@@ -68,7 +68,7 @@ export default class InputLoop {
 	public choose = async (options: string[], lastOptionClose?: boolean, choice?: string | number): Promise<boolean[]> => {
 		this.out.newline();
 		options.forEach((option: string, index: number) => {
-			if (options.length < 5) this.out.print(`[${index}] ${option}  `);
+			if (options.length < 7) this.out.print(`[${index}] ${option}  `);
 			else this.out.print(`${index}: ${option}`, true);
 		});
 		
