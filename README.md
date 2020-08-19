@@ -104,6 +104,19 @@ while (!(result[0] || result[1])) {
 
 ```
 
+## Experimental
+In order to use private input (not visible as you type), use the `--unstable` flag when running, and you can pass a flag to `read` or `question` to enable it:
+```javascript
+const input = new InputLoop();
+const mainQuestions = ["Add a node", "Add an edge", "Set starting node", "Evaluate a string", "Quit"];
+
+let result = await input.choose(mainQuestions, false, true);
+
+while (!(result[0] || result[1])) {
+	result = input.repeat();
+}
+```
+
 ## Testing
 Deno tests can be run using:
 ```
