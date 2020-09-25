@@ -1,4 +1,5 @@
-import { IConfig, ACTIONS } from './types.ts';
+import { ACTIONS } from './types.ts';
+import type { IConfig } from './types.ts';
 import Printer from './printer.ts';
 import History from './history.ts';
 
@@ -50,7 +51,9 @@ export default class InputLoop {
 	 */
 	public read = async (privateInput: boolean): Promise<string> => {
 		if (privateInput) {
-			return this.readPrivate();
+			const result = await this.readPrivate();
+			this.out.newline();
+			return result;
 		}
 		return new Promise(async (resolve, reject) => {
 			const n = await Deno.stdin.read(this.buf);
@@ -113,7 +116,7 @@ export default class InputLoop {
 		}
 
 		this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false, undefined, privateInput ?? false);
-
+		console.log(lastOptionClose, result === String(options.length - 1));
 		if (lastOptionClose && result === String(options.length - 1)) {
 			this.close();
 		}
