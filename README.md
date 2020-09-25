@@ -105,7 +105,7 @@ while (!(result[0] || result[1])) {
 ```
 
 ## Experimental
-In order to use private input (not visible as you type), use the `--unstable` flag when running, and you can pass a flag to `read` or `question` to enable it:
+In order to use private input (not visible as you type), use the `--unstable` flag when running, and you can pass a flag to `choose` or `question` to enable it:
 ```javascript
 const input = new InputLoop();
 const mainQuestions = ["Add a node", "Add an edge", "Set starting node", "Evaluate a string", "Quit"];
