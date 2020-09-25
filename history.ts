@@ -6,13 +6,15 @@ export default class History {
 		lastOptionClose: false,
 		action: ACTIONS.NONE,
 		includeNewline: false,
+		privateInput: false,
 	};
 
-	public save = (argument: string | string[], action: ACTIONS, lastOptionClose?: boolean, includeNewline?: boolean) => {
+	public save = (argument: string | string[], action: ACTIONS, lastOptionClose?: boolean, includeNewline?: boolean, privateInput?: boolean) => {
 		this.last = {
 			argument,
 			lastOptionClose: lastOptionClose ?? this.last.lastOptionClose,
 			includeNewline: includeNewline ?? this.last.includeNewline,
+			privateInput: privateInput ?? this.last.privateInput,
 			action,
 		}
 	}

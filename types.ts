@@ -13,4 +13,5 @@ export interface ILastAction {
 	lastOptionClose: boolean;
 	action: ACTIONS;
 	includeNewline: boolean;
+	privateInput: boolean;
 }
