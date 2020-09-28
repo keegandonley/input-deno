@@ -1,4 +1,4 @@
-import { IConfig } from "./types.ts";
+import type { IConfig } from "./types.ts";
 
 const dividerChar = '-';
 
