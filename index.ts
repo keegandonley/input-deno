@@ -116,7 +116,7 @@ export default class InputLoop {
 		}
 
 		this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false, undefined, privateInput ?? false);
-		console.log(lastOptionClose, result === String(options.length - 1));
+		
 		if (lastOptionClose && result === String(options.length - 1)) {
 			this.close();
 		}
