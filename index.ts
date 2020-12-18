@@ -20,10 +20,6 @@ export default class InputLoop {
 		return value;
 	}
 
-	private promisify = (value?: string): Promise<string> => {
-		return new Promise((resolve) => resolve(value));
-	}
-
 	private cleanInput = (value?: string): string => {
 		return value?.replace('\n', '').replace('\r', '') ?? '';
 	}
@@ -70,7 +66,7 @@ export default class InputLoop {
 		return new Promise(async (resolve, reject) => {
 			(Deno as any).setRaw?.(0, true);
 			let input = '';
-			
+
 			let n = await Deno.stdin.read(this.buf);
 
 			while (n) {
@@ -104,7 +100,7 @@ export default class InputLoop {
 			this.out.print(`${index}: ${option}`, true);
 		});
 		this.out.divider(30);
-		
+
 		// Allow passing a result directly instead of prompting for it.
 		// Mostly used for testing without the need for interactive input
 
@@ -116,7 +112,7 @@ export default class InputLoop {
 		}
 
 		this.history.save(options, ACTIONS.CHOOSE, lastOptionClose ?? false, undefined, privateInput ?? false);
-		
+
 		if (lastOptionClose && result === String(options.length - 1)) {
 			this.close();
 		}
@@ -137,13 +133,13 @@ export default class InputLoop {
 	 * @param {string | number} value value to auto-select
 	 * @returns {Promise<string>} The value entered
 	 */
-	public question = (question: string, includeNewline?: boolean, privateInput?: boolean, value?: string | number): Promise<string> => {
+	public question = async (question: string, includeNewline?: boolean, privateInput?: boolean, value?: string | number): Promise<string> => {
 		this.out.print(question, includeNewline ?? true);
 
 		this.history.save(question, ACTIONS.QUESTION, undefined, includeNewline ?? true, privateInput ?? false);
 
 		if (value) {
-			return this.promisify(this.cleanInput(this.coerceChoice(value)));
+			return this.cleanInput(this.coerceChoice(value));
 		}
 
 		return this.read(privateInput ?? false);
