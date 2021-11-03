@@ -89,6 +89,23 @@ export default class InputLoop {
 		return p;
 	}
 
+	public wait = async (question?: string, includeNewline?: boolean): Promise<boolean> => {
+		this.out.print(question ?? 'Press any key to continue...', includeNewline ?? true);
+		(Deno as any).setRaw?.(Deno.stdin.rid, true);
+		const p = deferred<boolean>();
+
+		let n = await Deno.stdin.read(this.buf);
+
+		if (n) {
+			(Deno as any).setRaw?.(Deno.stdin.rid, false);
+			p.resolve(true);
+		} else {
+			p.resolve(false);
+		}
+
+		return p;
+	}
+
 	/**
 	 * Prompts the user to choose from a list of options
 	 * @param {string[]} options

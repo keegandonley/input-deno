@@ -3,6 +3,7 @@ import Input from './index.ts';
 const input = new Input();
 
 while (!input.done) {
+	await input.wait();
 	const result1 = await input.question("Say something: ", false);
 	console.log('You said', result1);
 	const result2 = await input.question("Say something with newline:");
