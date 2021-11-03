@@ -14,5 +14,5 @@ jobs:
     - uses: actions/checkout@master
     - uses: denolib/setup-deno@master
       with:
-        deno-version: v1.4.2
+        deno-version: v1.15.3
     - run: deno test history.test.ts
