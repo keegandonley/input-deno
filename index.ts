@@ -2,6 +2,7 @@ import { ACTIONS } from './types.ts';
 import type { IConfig } from './types.ts';
 import Printer from './printer.ts';
 import History from './history.ts';
+import { deferred } from "https://deno.land/std/async/mod.ts";
 
 export default class InputLoop {
 	private buf = new Uint8Array(1024);
@@ -63,26 +64,27 @@ export default class InputLoop {
 	}
 
 	private readPrivate = async (): Promise<string> => {
-		return new Promise(async (resolve, reject) => {
-			(Deno as any).setRaw?.(0, true);
-			let input = '';
+		(Deno as any).setRaw?.(Deno.stdin.rid, true);
+		const p = deferred<string>();
+		let input = '';
 
-			let n = await Deno.stdin.read(this.buf);
+		let n = await Deno.stdin.read(this.buf);
 
-			while (n) {
-				const text = new TextDecoder().decode(this.buf.subarray(0, n));
-				if (text.includes('\n') || text.includes('\r')) {
-					(Deno as any).setRaw?.(Deno.stdin.rid, false);
-					resolve(input);
-				}
-				if (text.includes('\u0003') || text.includes('\u0004')) {
-					Deno.exit()
-				}
-				input += text;
-				n = await Deno.stdin.read(this.buf);
+		while (n) {
+			const text = new TextDecoder().decode(this.buf.subarray(0, n));
+			if (text.includes('\n') || text.includes('\r')) {
+				(Deno as any).setRaw?.(Deno.stdin.rid, false);
+				p.resolve(input);
+				break;
 			}
+			if (text.includes('\u0003') || text.includes('\u0004')) {
+				Deno.exit();
+			}
+			input += text;
+			n = await Deno.stdin.read(this.buf);
+		}
 
-		});
+		return p;
 	}
 
 	/**
@@ -142,7 +144,8 @@ export default class InputLoop {
 			return this.cleanInput(this.coerceChoice(value));
 		}
 
-		return this.read(privateInput ?? false);
+		const result = await this.read(privateInput ?? false);
+		return result;
 	}
 
 	/**
