@@ -78,6 +78,8 @@ export default class InputLoop {
 				break;
 			}
 			if (text.includes('\u0003') || text.includes('\u0004')) {
+				(Deno as any).setRaw?.(Deno.stdin.rid, false);
+				p.resolve('');
 				Deno.exit();
 			}
 			input += text;
