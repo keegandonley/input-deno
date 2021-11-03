@@ -117,6 +117,15 @@ while (!(result[0] || result[1])) {
 }
 ```
 
+This is also required for `input.wait()`, which can be used to wait for any key to be pressed:
+
+```javascript
+await input.wait('Press any key to continue...', true);
+
+// Equivalent to
+await input.wait();
+```
+
 ## Testing
 Deno tests can be run using:
 ```
