@@ -64,7 +64,7 @@ export default class InputLoop {
 	}
 
 	private readPrivate = async (): Promise<string> => {
-		(Deno as any).setRaw?.(Deno.stdin.rid, true);
+		(Deno as any).stdin.setRaw?.(Deno.stdin.rid, true);
 		const p = deferred<string>();
 		let input = '';
 
@@ -73,12 +73,12 @@ export default class InputLoop {
 		while (n) {
 			const text = new TextDecoder().decode(this.buf.subarray(0, n));
 			if (text.includes('\n') || text.includes('\r')) {
-				(Deno as any).setRaw?.(Deno.stdin.rid, false);
+				(Deno as any).stdin.setRaw?.(Deno.stdin.rid, false);
 				p.resolve(input);
 				break;
 			}
 			if (text.includes('\u0003') || text.includes('\u0004')) {
-				(Deno as any).setRaw?.(Deno.stdin.rid, false);
+				(Deno as any).stdin.setRaw?.(Deno.stdin.rid, false);
 				p.resolve('');
 				Deno.exit();
 			}
@@ -91,13 +91,13 @@ export default class InputLoop {
 
 	public wait = async (question?: string, includeNewline?: boolean): Promise<boolean> => {
 		this.out.print(question ?? 'Press any key to continue...', includeNewline ?? true);
-		(Deno as any).setRaw?.(Deno.stdin.rid, true);
+		(Deno as any).stdin.setRaw?.(Deno.stdin.rid, true);
 		const p = deferred<boolean>();
 
 		let n = await Deno.stdin.read(this.buf);
 
 		if (n) {
-			(Deno as any).setRaw?.(Deno.stdin.rid, false);
+			(Deno as any).stdin.setRaw?.(Deno.stdin.rid, false);
 			p.resolve(true);
 		} else {
 			p.resolve(false);
