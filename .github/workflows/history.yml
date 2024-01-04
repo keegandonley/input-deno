@@ -2,17 +2,17 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   history:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
-    - uses: denolib/setup-deno@master
-      with:
-        deno-version: v1.15.3
-    - run: deno test history.test.ts
+      - uses: actions/checkout@master
+      - uses: denolib/setup-deno@master
+        with:
+          deno-version: v1.39.1
+      - run: deno test history.test.ts
