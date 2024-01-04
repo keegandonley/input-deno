@@ -5,7 +5,7 @@
 
 </div>
 
-# Input-Deno v2.0.3
+# Input-Deno v2.0.4
 ![Tests](https://github.com/keegandonley/input-deno/workflows/Tests/badge.svg)
 
 Used to get command line input from the user
