@@ -2,7 +2,7 @@ import { ACTIONS } from './types.ts';
 import type { IConfig } from './types.ts';
 import Printer from './printer.ts';
 import History from './history.ts';
-import { deferred } from "https://deno.land/std/async/mod.ts";
+import { deferred } from "https://deno.land/std@0.205.0/async/mod.ts";
 
 export default class InputLoop {
 	private buf = new Uint8Array(1024);
